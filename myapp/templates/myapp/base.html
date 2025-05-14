@@ -164,7 +164,7 @@
                 </li>
                 {% if user.is_staff %}
                   <li>
-                    <a href="#" onclick="showCarForm()">
+                    <a href="{% url 'add_car' %}">
                       <i class="fas fa-plus-circle"></i>
                       Add Car
                     </a>

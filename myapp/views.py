@@ -91,7 +91,7 @@ def edit_car(request, car_id):
                     CarFeature.objects.create(car=car, feature_name=feature)
             
             messages.success(request, 'Car updated successfully!')
-            return redirect('dashboard', car_id=car.id)
+            return redirect('dashboard')
     else:
         form = CarForm(instance=car)
         # Pre-populate features field
