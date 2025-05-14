@@ -140,3 +140,12 @@ def profile(request):
         return redirect('profile')
     
     return render(request, 'myapp/profile.html', {'user': request.user})
+
+@login_required
+def car_detail(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+    context = {
+        'car': car,
+        'is_admin': request.user.is_staff
+    }
+    return render(request, 'myapp/car_detail.html', context)

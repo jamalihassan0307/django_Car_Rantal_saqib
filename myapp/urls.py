@@ -14,6 +14,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     
     # Car management
+    path('car/<int:car_id>/', views.car_detail, name='car_detail'),
     path('add-car/', views.add_car, name='add_car'),
     path('edit-car/<int:car_id>/', views.edit_car, name='edit_car'),
     path('delete-car/<int:car_id>/', views.delete_car, name='delete_car'),
