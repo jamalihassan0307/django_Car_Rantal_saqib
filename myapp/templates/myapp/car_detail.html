@@ -1,0 +1,372 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}{{ car.name }} - Car Details{% endblock %}
+
+{% block content %}
+<div class="car-detail-container">
+    <div class="car-detail-card">
+        <div class="car-detail-header">
+            <h1>{{ car.name }}</h1>
+            {% if is_admin %}
+            <div class="admin-actions">
+                <button class="edit-btn" onclick="editCar({{ car.id }})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="delete-btn" onclick="deleteCar({{ car.id }})">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="car-detail-image">
+            <img src="{{ car.image.url }}" alt="{{ car.name }}">
+            <div class="car-status {{ car.status }}">{{ car.status|title }}</div>
+        </div>
+
+        <div class="car-info-grid">
+            <div class="info-item">
+                <span class="label"><i class="fas fa-car"></i> Model</span>
+                <span class="value">{{ car.model }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label"><i class="fas fa-tag"></i> Price</span>
+                <span class="value">${{ car.price }}/day</span>
+            </div>
+            <div class="info-item">
+                <span class="label"><i class="fas fa-clock"></i> Added</span>
+                <span class="value">{{ car.created_at|date:"M d, Y" }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label"><i class="fas fa-user"></i> Added By</span>
+                <span class="value">{{ car.created_by.get_full_name|default:car.created_by.username }}</span>
+            </div>
+        </div>
+
+        <div class="car-features-section">
+            <h3><i class="fas fa-list"></i> Features</h3>
+            <div class="features-grid">
+                {% for feature in car.features.all %}
+                <div class="feature-item">
+                    <i class="fas fa-check"></i>
+                    {{ feature.feature_name }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="car-description-section">
+            <h3><i class="fas fa-info-circle"></i> Description</h3>
+            <p>{{ car.description }}</p>
+        </div>
+
+        <div class="car-actions">
+            {% if car.status == 'available' %}
+                <button class="rent-btn" onclick="rentCar({{ car.id }})">
+                    <i class="fas fa-key"></i> Rent Now
+                </button>
+            {% elif car.status == 'rented' %}
+                <button class="return-btn" onclick="returnCar({{ car.id }})">
+                    <i class="fas fa-undo"></i> Return Car
+                </button>
+            {% endif %}
+            <a href="{% url 'dashboard' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .car-detail-container {
+        padding: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .car-detail-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .car-detail-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .car-detail-header h1 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .admin-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .car-detail-image {
+        position: relative;
+        height: 400px;
+    }
+
+    .car-detail-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .car-status {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        color: white;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .car-status.available {
+        background: #27ae60;
+    }
+
+    .car-status.rented {
+        background: #e74c3c;
+    }
+
+    .car-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .info-item .label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-item .value {
+        color: #2c3e50;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .car-features-section,
+    .car-description-section {
+        padding: 20px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    .car-features-section h3,
+    .car-description-section h3 {
+        color: #2c3e50;
+        margin: 0 0 15px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        color: #2c3e50;
+    }
+
+    .feature-item i {
+        color: #27ae60;
+    }
+
+    .car-description-section p {
+        color: #2c3e50;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .car-actions {
+        padding: 20px;
+        display: flex;
+        gap: 15px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    .car-actions button,
+    .car-actions a {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .rent-btn {
+        background: #27ae60;
+        color: white;
+    }
+
+    .rent-btn:hover {
+        background: #219a52;
+    }
+
+    .return-btn {
+        background: #3498db;
+        color: white;
+    }
+
+    .return-btn:hover {
+        background: #2980b9;
+    }
+
+    .back-btn {
+        background: #95a5a6;
+        color: white;
+    }
+
+    .back-btn:hover {
+        background: #7f8c8d;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    .edit-btn {
+        background: #f1c40f;
+    }
+
+    .edit-btn:hover {
+        background: #f39c12;
+    }
+
+    .delete-btn {
+        background: #e74c3c;
+    }
+
+    .delete-btn:hover {
+        background: #c0392b;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editCar(carId) {
+    window.location.href = `/edit-car/${carId}/`;
+}
+
+function deleteCar(carId) {
+    if (confirm('Are you sure you want to delete this car?')) {
+        fetch(`/delete-car/${carId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/dashboard/';
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+}
+
+function rentCar(carId) {
+    fetch(`/rent-car/${carId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    });
+}
+
+function returnCar(carId) {
+    fetch(`/return-car/${carId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %} 

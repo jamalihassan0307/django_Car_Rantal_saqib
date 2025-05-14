@@ -27,30 +27,24 @@
     <div class="car-grid">
         {% for car in cars %}
         <div class="car-card">
-            <div class="car-image">
-                <img src="{{ car.image.url }}" alt="{{ car.name }}">
-                <div class="car-status {{ car.status }}">{{ car.status|title }}</div>
-            </div>
-            <div class="car-details">
-                <h3>{{ car.name }}</h3>
-                <p class="car-model">{{ car.model }}</p>
-                <p class="car-price">${{ car.price }}/day</p>
-                <div class="car-features">
-                    {% for feature in car.features.all %}
-                    <span class="feature-tag">{{ feature.feature_name }}</span>
-                    {% endfor %}
+            <a href="{% url 'car_detail' car.id %}" class="car-link">
+                <div class="car-image">
+                    <img src="{{ car.image.url }}" alt="{{ car.name }}">
+                    <div class="car-status {{ car.status }}">{{ car.status|title }}</div>
                 </div>
-                <p class="car-description">{{ car.description }}</p>
-            </div>
+                <div class="car-details">
+                    <h3>{{ car.name }}</h3>
+                    <p class="car-model">{{ car.model }}</p>
+                    <p class="car-price">${{ car.price }}/day</p>
+                    <div class="car-features">
+                        {% for feature in car.features.all %}
+                        <span class="feature-tag">{{ feature.feature_name }}</span>
+                        {% endfor %}
+                    </div>
+                    <p class="car-description">{{ car.description }}</p>
+                </div>
+            </a>
             <div class="car-actions">
-                {% if is_admin %}
-                    <button class="edit-btn" onclick="editCar({{ car.id }})">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="delete-btn" onclick="deleteCar({{ car.id }})">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                {% endif %}
                 {% if car.status == 'available' %}
                     <button class="rent-btn" onclick="rentCar({{ car.id }})">
                         <i class="fas fa-key"></i> Rent Now
@@ -59,6 +53,16 @@
                     <button class="return-btn" onclick="returnCar({{ car.id }})">
                         <i class="fas fa-undo"></i> Return Car
                     </button>
+                {% endif %}
+                {% if is_admin %}
+                    <div class="admin-actions">
+                        <button class="edit-btn" onclick="editCar({{ car.id }})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn" onclick="deleteCar({{ car.id }})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -121,11 +125,18 @@
         overflow: hidden;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
+        position: relative;
     }
 
     .car-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .car-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
     }
 
     .car-image {
@@ -209,6 +220,26 @@
         display: flex;
         gap: 10px;
         border-top: 1px solid #ecf0f1;
+        position: relative;
+    }
+
+    .admin-actions {
+        position: absolute;
+        right: 20px;
+        bottom: 100%;
+        display: flex;
+        gap: 5px;
+        padding: 10px;
+        background: rgba(44, 62, 80, 0.9);
+        border-radius: 8px 8px 0 0;
+        transform: translateY(100%);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .car-card:hover .admin-actions {
+        transform: translateY(0);
+        opacity: 1;
     }
 
     .car-actions button {
@@ -225,22 +256,36 @@
         transition: all 0.3s ease;
     }
 
+    .edit-btn,
+    .delete-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
     .edit-btn {
         background: #f1c40f;
-        color: white;
     }
 
     .edit-btn:hover {
         background: #f39c12;
+        transform: scale(1.1);
     }
 
     .delete-btn {
         background: #e74c3c;
-        color: white;
     }
 
     .delete-btn:hover {
         background: #c0392b;
+        transform: scale(1.1);
     }
 
     .rent-btn {
@@ -312,10 +357,14 @@ function showCarForm() {
 }
 
 function editCar(carId) {
-    // Implement car edit logic
+    event.preventDefault();
+    event.stopPropagation();
+    window.location.href = `/edit-car/${carId}/`;
 }
 
 function deleteCar(carId) {
+    event.preventDefault();
+    event.stopPropagation();
     if (confirm('Are you sure you want to delete this car?')) {
         fetch(`/delete-car/${carId}/`, {
             method: 'POST',
@@ -335,6 +384,8 @@ function deleteCar(carId) {
 }
 
 function rentCar(carId) {
+    event.preventDefault();
+    event.stopPropagation();
     fetch(`/rent-car/${carId}/`, {
         method: 'POST',
         headers: {
@@ -352,6 +403,8 @@ function rentCar(carId) {
 }
 
 function returnCar(carId) {
+    event.preventDefault();
+    event.stopPropagation();
     fetch(`/return-car/${carId}/`, {
         method: 'POST',
         headers: {
