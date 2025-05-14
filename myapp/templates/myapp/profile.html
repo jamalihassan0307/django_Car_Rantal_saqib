@@ -1,0 +1,253 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}Profile - Car Rental System{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-box">
+        <div class="profile-header">
+            <i class="fas fa-user-circle"></i>
+            <h2>Profile Settings</h2>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="profile-form">
+            {% csrf_token %}
+            
+            <div class="profile-picture-section">
+                <div class="current-picture">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+                    {% else %}
+                        <i class="fas fa-user-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="upload-section">
+                    <label for="profile_picture" class="upload-btn">
+                        <i class="fas fa-camera"></i>
+                        Change Picture
+                    </label>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" style="display: none;">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                    <input 
+                        type="text" 
+                        name="first_name" 
+                        value="{{ user.first_name }}"
+                        placeholder="First Name"
+                    />
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                    <input 
+                        type="text" 
+                        name="last_name" 
+                        value="{{ user.last_name }}"
+                        placeholder="Last Name"
+                    />
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        value="{{ user.email }}"
+                        placeholder="Email"
+                    />
+                </div>
+            </div>
+
+            <div class="role-info">
+                <p><strong>Role:</strong> 
+                    {% if user.is_superuser %}
+                        Super Admin
+                    {% elif user.is_staff %}
+                        Admin
+                    {% else %}
+                        User
+                    {% endif %}
+                </p>
+            </div>
+
+            <button type="submit" class="save-btn">
+                <i class="fas fa-save"></i>
+                Save Changes
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .profile-box {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-header i {
+        font-size: 3rem;
+        color: #3498db;
+        margin-bottom: 1rem;
+    }
+
+    .profile-picture-section {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .current-picture {
+        margin-bottom: 1rem;
+    }
+
+    .current-picture img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #3498db;
+    }
+
+    .current-picture i {
+        font-size: 150px;
+        color: #bdc3c7;
+    }
+
+    .upload-btn {
+        background: #3498db;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .upload-btn:hover {
+        background: #2980b9;
+    }
+
+    .input-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #95a5a6;
+    }
+
+    .input-icon input {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .input-icon input:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        outline: none;
+    }
+
+    .role-info {
+        margin: 1.5rem 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .save-btn {
+        width: 100%;
+        padding: 12px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .save-btn:hover {
+        background: #2980b9;
+        transform: translateY(-1px);
+    }
+
+    .messages {
+        margin-bottom: 1.5rem;
+    }
+
+    .alert {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .alert-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .alert-success {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+</style>
+{% endblock %} 

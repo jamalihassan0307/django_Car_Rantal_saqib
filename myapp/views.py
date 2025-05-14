@@ -22,7 +22,12 @@ def login_view(request):
 @login_required
 def dashboard(request):
     cars = Car.objects.all()
-    return render(request, 'myapp/dashboard.html', {'cars': cars})
+    context = {
+        'cars': cars,
+        'is_admin': request.user.is_staff,
+        'is_superuser': request.user.is_superuser
+    }
+    return render(request, 'myapp/dashboard.html', context)
 
 def about(request):
     return render(request, 'myapp/about.html')
@@ -118,3 +123,20 @@ def return_car(request, car_id):
         car.save()
         return JsonResponse({'success': True, 'message': 'Car returned successfully!'})
     return JsonResponse({'success': False, 'message': 'Car is not rented!'})
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        user = request.user
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+        
+        if 'profile_picture' in request.FILES:
+            user.profile_picture = request.FILES['profile_picture']
+        
+        user.save()
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('profile')
+    
+    return render(request, 'myapp/profile.html', {'user': request.user})

@@ -11,12 +11,203 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
     {% block extra_css %}{% endblock %}
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #2c3e50;
+            padding-top: 20px;
+            color: white;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            color: #3498db;
+        }
+
+        .menu-items {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .menu-items li {
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-items li:hover {
+            background: #34495e;
+        }
+
+        .menu-items li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-items li i {
+            width: 20px;
+        }
+
+        /* Main content area */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        /* Role badges */
+        .role-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .role-badge.admin {
+            background: #e74c3c;
+        }
+
+        .role-badge.super-admin {
+            background: #9b59b6;
+        }
+
+        .role-badge.user {
+            background: #27ae60;
+        }
+
+        /* User info in sidebar */
+        .user-info {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .user-info img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 3px solid #3498db;
+        }
+
+        .user-info .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-info .user-email {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+            margin-bottom: 10px;
+        }
+    </style>
   </head>
   <body>
     <div class="layout">
       {% if user.is_authenticated %}
         <div id="sidebarContainer">
-          {% include 'myapp/sidebar.html' %}
+          <div class="sidebar">
+            <div class="sidebar-header">
+              <h3>Car Rental System</h3>
+            </div>
+            
+            <div class="user-info">
+              {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+              {% else %}
+                <i class="fas fa-user-circle" style="font-size: 80px; color: #3498db;"></i>
+              {% endif %}
+              <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+              <div class="user-email">{{ user.email }}</div>
+              {% if user.is_superuser %}
+                <div class="role-badge super-admin">Super Admin</div>
+              {% elif user.is_staff %}
+                <div class="role-badge admin">Admin</div>
+              {% else %}
+                <div class="role-badge user">User</div>
+              {% endif %}
+            </div>
+
+            <ul class="menu-items">
+              {% if user.is_authenticated %}
+                <li>
+                  <a href="{% url 'dashboard' %}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'profile' %}">
+                    <i class="fas fa-user"></i>
+                    Profile
+                  </a>
+                </li>
+                {% if user.is_staff %}
+                  <li>
+                    <a href="#" onclick="showCarForm()">
+                      <i class="fas fa-plus-circle"></i>
+                      Add Car
+                    </a>
+                  </li>
+                {% endif %}
+                {% if user.is_superuser %}
+                  <li>
+                    <a href="/admin/" target="_blank">
+                      <i class="fas fa-user-shield"></i>
+                      Admin Panel
+                    </a>
+                  </li>
+                {% endif %}
+              {% endif %}
+              <li>
+                <a href="{% url 'about' %}">
+                  <i class="fas fa-info-circle"></i>
+                  About
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'contact' %}">
+                  <i class="fas fa-envelope"></i>
+                  Contact
+                </a>
+              </li>
+              {% if user.is_authenticated %}
+                <li>
+                  <a href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                  </a>
+                </li>
+              {% else %}
+                <li>
+                  <a href="{% url 'login' %}">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
         </div>
       {% endif %}
       <main class="main-content">
