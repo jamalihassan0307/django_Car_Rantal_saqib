@@ -8,14 +8,15 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 def login_view(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
+        username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            messages.success(request, f'Welcome back, {user.username}!')
             return redirect('dashboard')
         else:
-            messages.error(request, 'Invalid credentials!')
+            messages.error(request, 'Invalid username or password!')
     return render(request, 'myapp/index.html')
 
 @login_required
@@ -27,10 +28,20 @@ def about(request):
     return render(request, 'myapp/about.html')
 
 def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        # Here you can add logic to handle the contact form submission
+        messages.success(request, 'Your message has been sent successfully!')
+        return redirect('contact')
     return render(request, 'myapp/contact.html')
 
-@staff_member_required
+@login_required
 def add_car(request):
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'message': 'Permission denied!'})
+    
     if request.method == 'POST':
         name = request.POST.get('name')
         model = request.POST.get('model')
@@ -56,8 +67,11 @@ def add_car(request):
         return JsonResponse({'success': True, 'message': 'Car added successfully!'})
     return JsonResponse({'success': False, 'message': 'Invalid request method!'})
 
-@staff_member_required
+@login_required
 def edit_car(request, car_id):
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'message': 'Permission denied!'})
+    
     car = get_object_or_404(Car, id=car_id)
     if request.method == 'POST':
         car.name = request.POST.get('name')
@@ -78,8 +92,11 @@ def edit_car(request, car_id):
         return JsonResponse({'success': True, 'message': 'Car updated successfully!'})
     return JsonResponse({'success': False, 'message': 'Invalid request method!'})
 
-@staff_member_required
+@login_required
 def delete_car(request, car_id):
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'message': 'Permission denied!'})
+    
     car = get_object_or_404(Car, id=car_id)
     car.delete()
     return JsonResponse({'success': True, 'message': 'Car deleted successfully!'})
