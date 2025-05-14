@@ -1,0 +1,156 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Car Rental System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+  <nav class="dashboard-nav">
+    <h1>Car Rental Dashboard</h1>
+    <div class="search-filter">
+      {% if user.is_staff %}
+      <button id="addCarBtn" class="add-car-btn">
+        <i class="fas fa-plus"></i> Add New Car
+      </button>
+      {% endif %}
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search car name..."
+      />
+      <select id="statusFilter">
+        <option value="all">All Cars</option>
+        <option value="available">Available</option>
+        <option value="rented">Rented</option>
+      </select>
+    </div>
+  </nav>
+
+  <div class="cars-container" id="carsContainer">
+    {% for car in cars %}
+    <div class="car-card">
+      <img src="{{ car.image.url }}" alt="{{ car.name }}">
+      <div class="car-info">
+        <h3>{{ car.name }}</h3>
+        <p>Model: {{ car.model }}</p>
+        <p>Status: <span class="status {{ car.status }}">{{ car.status }}</span></p>
+      </div>
+      <div class="car-actions">
+        {% if car.status == 'available' %}
+          <button class="action-btn rent-btn" data-car-id="{{ car.id }}">Rent</button>
+        {% else %}
+          <button class="action-btn return-btn" data-car-id="{{ car.id }}">Return</button>
+        {% endif %}
+        {% if user.is_staff %}
+          <button class="action-btn edit-btn" data-car-id="{{ car.id }}">Edit</button>
+          <button class="action-btn delete-btn" data-car-id="{{ car.id }}">Delete</button>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="no-results">No cars found</div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Car Details Modal -->
+<div id="carModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div id="carDetails"></div>
+  </div>
+</div>
+
+<!-- Add New Car Modal -->
+{% if user.is_staff %}
+<div id="addCarModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Add New Car</h2>
+    <form id="addCarForm" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="carName">Car Name:</label>
+        <input type="text" id="carName" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="carModel">Model:</label>
+        <input type="text" id="carModel" name="model" required />
+      </div>
+      <div class="form-group">
+        <label for="carImage">Image:</label>
+        <input type="file" id="carImage" name="image" accept="image/*" required />
+      </div>
+      <div class="form-group">
+        <label for="carPrice">Price per Day:</label>
+        <input type="number" id="carPrice" name="price" step="0.01" required />
+      </div>
+      <div class="form-group">
+        <label for="carStatus">Status:</label>
+        <select id="carStatus" name="status" required>
+          <option value="available">Available</option>
+          <option value="rented">Rented</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="carFeatures">Features (comma-separated):</label>
+        <input type="text" id="carFeatures" name="features" required />
+      </div>
+      <div class="form-group">
+        <label for="carDescription">Description:</label>
+        <textarea id="carDescription" name="description" rows="3" required></textarea>
+      </div>
+      <button type="submit">Add Car</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Car Modal -->
+<div id="editCarModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Edit Car</h2>
+    <form id="editCarForm" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" id="editCarId" name="car_id" />
+      <div class="form-group">
+        <label for="editCarName">Car Name:</label>
+        <input type="text" id="editCarName" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="editCarModel">Model:</label>
+        <input type="text" id="editCarModel" name="model" required />
+      </div>
+      <div class="form-group">
+        <label for="editCarImage">Image:</label>
+        <input type="file" id="editCarImage" name="image" accept="image/*" />
+      </div>
+      <div class="form-group">
+        <label for="editCarPrice">Price per Day:</label>
+        <input type="number" id="editCarPrice" name="price" step="0.01" required />
+      </div>
+      <div class="form-group">
+        <label for="editCarStatus">Status:</label>
+        <select id="editCarStatus" name="status" required>
+          <option value="available">Available</option>
+          <option value="rented">Rented</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="editCarFeatures">Features (comma-separated):</label>
+        <input type="text" id="editCarFeatures" name="features" required />
+      </div>
+      <div class="form-group">
+        <label for="editCarDescription">Description:</label>
+        <textarea id="editCarDescription" name="description" rows="3" required></textarea>
+      </div>
+      <button type="submit">Update Car</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/dashboard.js' %}"></script>
+{% endblock %} 
