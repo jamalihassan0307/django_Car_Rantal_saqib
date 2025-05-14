@@ -353,7 +353,7 @@
 {% block extra_js %}
 <script>
 function showCarForm() {
-    // Implement car form display logic
+    window.location.href = "{% url 'add_car' %}";
 }
 
 function editCar(carId) {
