@@ -89,9 +89,7 @@
                 <button type="submit" class="submit-btn">
                     <i class="fas fa-save"></i> {{ submit_text }}
                 </button>
-                <a href="{% if car %}{% url 'car_detail' car.id %}{% else %}{% url 'dashboard' %}{% endif %}" class="cancel-btn">
-                    <i class="fas fa-times"></i> Cancel
-                </a>
+               
             </div>
         </form>
     </div>

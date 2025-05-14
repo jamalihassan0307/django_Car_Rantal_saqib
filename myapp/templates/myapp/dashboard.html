@@ -27,7 +27,7 @@
     <div class="car-grid">
         {% for car in cars %}
         <div class="car-card">
-            <a href="{% url 'car_detail' car.id %}" class="car-link">
+           
                 <div class="car-image">
                     <img src="{{ car.image.url }}" alt="{{ car.name }}">
                     <div class="car-status {{ car.status }}">{{ car.status|title }}</div>
@@ -43,7 +43,7 @@
                     </div>
                     <p class="car-description">{{ car.description }}</p>
                 </div>
-            </a>
+           
             <div class="car-actions">
                 {% if car.status == 'available' %}
                     <button class="rent-btn" onclick="rentCar({{ car.id }})">
