@@ -30,9 +30,11 @@ def dashboard(request):
     }
     return render(request, 'myapp/dashboard.html', context)
 
+@login_required
 def about(request):
     return render(request, 'myapp/about.html')
 
+@login_required
 def contact(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -89,7 +91,7 @@ def edit_car(request, car_id):
                     CarFeature.objects.create(car=car, feature_name=feature)
             
             messages.success(request, 'Car updated successfully!')
-            return redirect('car_detail', car_id=car.id)
+            return redirect('dashboard', car_id=car.id)
     else:
         form = CarForm(instance=car)
         # Pre-populate features field
@@ -146,11 +148,3 @@ def profile(request):
     
     return render(request, 'myapp/profile.html', {'user': request.user})
 
-@login_required
-def car_detail(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-    context = {
-        'car': car,
-        'is_admin': request.user.is_staff
-    }
-    return render(request, 'myapp/car_detail.html', context)
