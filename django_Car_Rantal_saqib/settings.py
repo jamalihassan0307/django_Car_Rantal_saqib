@@ -83,6 +83,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -179,7 +181,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
     'prompt': 'consent'
 }
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://jobportalshahmeerali.pythonanywhere.com/social-auth/complete/google-oauth2/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://saqibwattoo.pythonanywhere.com/social-auth/complete/google-oauth2/'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = [
     ('email', 'email'),
