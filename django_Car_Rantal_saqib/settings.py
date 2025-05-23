@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-)cg3zbi&_!ayj5m^h02(j4@d=b*+cgwt4s&3tog+r1qj#0b)-_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['jobportalshahmeerali.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -147,55 +147,47 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom User Model
 AUTH_USER_MODEL = 'myapp.User'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '836022981611-ftmiop5kt4nlshgi46bjffdm9jm6ucl6.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '836022981611-ftmiop5kt4nlshgi46bjffdm9jm6ucl6.apps.googleusercontent.com'  # Replace with your Google Client ID
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'  # Replace with your Google Client Secret
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
+
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
     'access_type': 'offline',
     'prompt': 'consent'
 }
+
 SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://jobportalshahmeerali.pythonanywhere.com/social-auth/complete/google-oauth2/'
-SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
-    'access_type': 'offline',
-    'prompt': 'consent'
-}
 
-
-
-LOGOUT_URL = 'logout'
-SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',
-    'social_core.pipeline.user.get_username',
-    'myapp.pipeline.get_or_create_role',
-    'myapp.pipeline.create_user',
-    'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',
-    'social_core.pipeline.user.user_details',
-    'myapp.pipeline.save_google_user',
-)
-
-# Add these settings for Google OAuth2
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = [
     ('email', 'email'),
     ('name', 'name'),
     ('picture', 'picture'),
 ]
 
-# Ensure user creation is handled properly
 SOCIAL_AUTH_CREATE_USERS = True
 SOCIAL_AUTH_USER_MODEL = 'myapp.User'
 
-# Add these settings for user creation
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'first_name', 'last_name', 'role']
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
+LOGOUT_URL = 'logout'
 
 
 
