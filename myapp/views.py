@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from .models import Car, CarFeature, User
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import CarForm
+from django.contrib.sessions.backends.db import SessionStore
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -16,6 +17,15 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            # Create session
+            session = SessionStore()
+            session.create()
+            session['user_id'] = user.id
+            session['username'] = user.username
+            session['email'] = user.email
+            session['is_authenticated'] = True
+            session.save()
+            
             messages.success(request, f'Welcome back, {user.username}!')
             return redirect('dashboard')
         else:
@@ -151,6 +161,9 @@ def profile(request):
     return render(request, 'myapp/profile.html', {'user': request.user})
 
 def logout_view(request):
+    if request.user.is_authenticated:
+        # Clear the session
+        request.session.flush()
     logout(request)
     messages.success(request, 'You have been successfully logged out.')
     return redirect('login')
