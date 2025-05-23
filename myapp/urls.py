@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path , include
 from django.contrib.auth import views as auth_views
 from . import views
 from django.shortcuts import redirect
@@ -25,4 +25,6 @@ urlpatterns = [
     path('delete-car/<int:car_id>/', views.delete_car, name='delete_car'),
     path('rent-car/<int:car_id>/', views.rent_car, name='rent_car'),
     path('return-car/<int:car_id>/', views.return_car, name='return_car'),
+    path('social-auth/', include('social_django.urls', namespace='social')),
+
 ]
