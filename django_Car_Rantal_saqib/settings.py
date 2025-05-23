@@ -169,48 +169,101 @@ AUTH_USER_MODEL = 'myapp.User'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '836022981611-ftmiop5kt4nlshgi46bjffdm9jm6ucl6.apps.googleusercontent.com'  # Replace with your Google Client ID
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'  # Replace with your Google Client Secret
-
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
-
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
     'access_type': 'offline',
     'prompt': 'consent'
 }
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://jobportalshahmeerali.pythonanywhere.com/social-auth/complete/google-oauth2/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    'access_type': 'offline',
+    'prompt': 'consent'
+}
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://saqibwattoo.pythonanywhere.com/social-auth/complete/google-oauth2/'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = [
-    ('email', 'email'),
-    ('name', 'name'),
-    ('picture', 'picture'),
-]
 
-SOCIAL_AUTH_CREATE_USERS = True
-SOCIAL_AUTH_USER_MODEL = 'myapp.User'
-
-SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
-SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'first_name', 'last_name', 'role']
-
+LOGOUT_URL = 'logout'
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
-    'social_core.pipeline.user.create_user',
+    'myapp.pipeline.get_or_create_role',
+    'myapp.pipeline.create_user',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
-    'myapp.pipeline.get_or_create_role',
     'myapp.pipeline.save_google_user',
-    'myapp.pipeline.create_session',
 )
 
+# Add these settings for Google OAuth2
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = [
+    ('email', 'email'),
+    ('name', 'name'),
+    ('picture', 'picture'),
+]
+
+# Ensure user creation is handled properly
+SOCIAL_AUTH_CREATE_USERS = True
+SOCIAL_AUTH_USER_MODEL = 'myapp.User'
+
+# Add these settings for user creation
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'first_name', 'last_name', 'role']
+
+
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    'access_type': 'offline',
+    'prompt': 'consent'
+}
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://jobportalshahmeerali.pythonanywhere.com/social-auth/complete/google-oauth2/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    'access_type': 'offline',
+    'prompt': 'consent'
+}
+
+
+
 LOGOUT_URL = 'logout'
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'myapp.pipeline.get_or_create_role',
+    'myapp.pipeline.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'myapp.pipeline.save_google_user',
+)
+
+# Add these settings for Google OAuth2
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = [
+    ('email', 'email'),
+    ('name', 'name'),
+    ('picture', 'picture'),
+]
+
+# Ensure user creation is handled properly
+SOCIAL_AUTH_CREATE_USERS = True
+SOCIAL_AUTH_USER_MODEL = 'myapp.User'
+
+# Add these settings for user creation
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'first_name', 'last_name', 'role']
 
 
 
