@@ -12,7 +12,7 @@ urlpatterns = [
     
     # Authentication URLs
     path('login/', views.login_view, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('logout/', views.logout_view, name='logout'),
     
     # Main pages
     path('dashboard/', views.dashboard, name='dashboard'),
@@ -26,5 +26,4 @@ urlpatterns = [
     path('rent-car/<int:car_id>/', views.rent_car, name='rent_car'),
     path('return-car/<int:car_id>/', views.return_car, name='return_car'),
     path('social-auth/', include('social_django.urls', namespace='social')),
-
 ]
