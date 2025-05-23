@@ -2,6 +2,7 @@ from social_core.pipeline.user import create_user
 from .models import User, Role
 from django.contrib.auth import login
 from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.auth import get_user_model
 
 def get_or_create_role(backend, user, response, *args, **kwargs):
     if backend.name == 'google-oauth2':
@@ -29,19 +30,23 @@ def save_google_user(backend, user, response, *args, **kwargs):
 def create_session(backend, user, response, *args, **kwargs):
     """Create a session for the user after successful authentication"""
     if backend.name == 'google-oauth2':
-        # Create a new session
-        session = SessionStore()
-        session.create()
-        
-        # Store user information in session
-        session['user_id'] = user.id
-        session['username'] = user.username
-        session['email'] = user.email
-        session['is_authenticated'] = True
-        
-        # Save the session
-        session.save()
-        
-        # Return the session key
-        return {'session_key': session.session_key}
+        try:
+            # Create a new session
+            session = SessionStore()
+            session.create()
+            
+            # Store user information in session
+            session['user_id'] = user.id
+            session['username'] = user.username
+            session['email'] = user.email
+            session['is_authenticated'] = True
+            
+            # Save the session
+            session.save()
+            
+            # Return the session key
+            return {'session_key': session.session_key}
+        except Exception as e:
+            print(f"Error creating session: {str(e)}")
+            return None
     return None 

@@ -174,17 +174,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
-SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
-    'access_type': 'offline',
-    'prompt': 'consent'
-}
 SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://saqibwattoo.pythonanywhere.com/social-auth/complete/google-oauth2/'
-SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
-    'access_type': 'offline',
-    'prompt': 'consent'
-}
-
-
 
 LOGOUT_URL = 'logout'
 SOCIAL_AUTH_PIPELINE = (
@@ -193,12 +183,13 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
-    'myapp.pipeline.get_or_create_role',
-    'myapp.pipeline.create_user',
+    'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    'myapp.pipeline.get_or_create_role',
     'myapp.pipeline.save_google_user',
+    'myapp.pipeline.create_session',
 )
 
 # Add these settings for Google OAuth2
