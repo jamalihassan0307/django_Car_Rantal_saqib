@@ -53,6 +53,18 @@
         Login
       </button>
     </form>
+    <div class="divider">
+      <span>or</span>
+      </div>
+
+    <div class="social-container">
+        <button class="google-btn">
+            <a href="{% url 'social:begin' 'google-oauth2' %}">
+              <img src="https://www.google.com/favicon.ico" alt="Google">
+      Sign in with Google
+            </a>
+      </button>
+    </div>
   </div>
 </div>
 {% endblock %}
@@ -177,5 +189,65 @@
     color: #166534;
     border: 1px solid #bbf7d0;
   }
+  .social-container {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.google-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: white;
+  color: #757575;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.google-btn:hover {
+  background: #f8f9fa;
+  border-color: #ccc;
+}
+
+.google-btn img {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.google-btn a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #666;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.divider span {
+  padding: 0 1rem;
+  font-size: 0.9rem;
+}
 </style>
 {% endblock %} 

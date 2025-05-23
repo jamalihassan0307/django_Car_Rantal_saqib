@@ -8,6 +8,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from .forms import CarForm
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
